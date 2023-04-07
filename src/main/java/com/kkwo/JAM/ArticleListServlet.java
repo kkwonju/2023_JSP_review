@@ -50,12 +50,11 @@ public class ArticleListServlet extends HttpServlet {
 			List<Map<String, Object>> articleRows = dbUtil.selectRows(conn, sql);
 			
 			response.getWriter().append(articleRows.toString());
+			// 여기까지 직접 처리
 			
-//			SecSql sql = new SecSql();
-//			sql.append("SELECT * FROM article;");
-
-//			List<Map<String, Object>> articleMaps = dbUtil.selectRows(conn, sql);
-			
+			// 여기는 위탁 처리
+			request.setAttribute("articleRows", articleRows); // set => jsp에서 get
+			request.getRequestDispatcher("/jsp/article/list.jsp").forward(request, response);
 
 		} catch (SQLException e) {
 			e.printStackTrace();
