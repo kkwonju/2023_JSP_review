@@ -1,0 +1,9 @@
+req: http://localhost:8080/2023_JSP_review/article/detail?id=2
+
+- 출력 : 브라우저
+번호 : 2번
+날짜 : ~~
+제목 : ~~
+내용 : ~~
+
+articleDetailServlet / detail.jsp
