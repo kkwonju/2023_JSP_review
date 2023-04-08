@@ -1,4 +1,4 @@
-package com.kkwo.JAM;
+package com.kkwo.JAM.servlet;
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -15,14 +15,13 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.kkwo.JAM.util.DBUtil;
 
-@WebServlet("/article/detail")
-public class ArticleDetailServlet extends HttpServlet {
+@WebServlet("/article/list")
+public class ArticleListServlet extends HttpServlet {
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		
 		response.setContentType("text/html; charset=UTF-8");
-		
 
 		// DB 연결
 		String url = "jdbc:mysql://127.0.0.1:3306/JSPAM?useUnicode=true&characterEncoding=utf8&autoReconnect=true&serverTimezone=Asia/Seoul&useOldAliasMetadataBehavior=true&zeroDateTimeNehavior=convertToNull";
@@ -42,20 +41,18 @@ public class ArticleDetailServlet extends HttpServlet {
 		try {
 			conn = DriverManager.getConnection(url, user, password);
 
-			DBUtil dbUtil = new DBUtil(request, response);
+			response.getWriter().append("Success!");
 
-			int id = Integer.parseInt(request.getParameter("id"));
+			String sql = "SELECT * FROM article ORDER BY id DESC;";
 			
-			String sql = String.format("SELECT * FROM article WHERE id = %d", id);
+			List<Map<String, Object>> articleRows = DBUtil.selectRows(conn, sql);
 			
-			Map<String, Object> articleRow = dbUtil.selectRow(conn, sql);
-			
-			response.getWriter().append(articleRow.toString());
+			response.getWriter().append(articleRows.toString());
 			// 여기까지 직접 처리
 			
 			// 여기는 위탁 처리
-			request.setAttribute("articleRow", articleRow); // set => jsp에서 get
-			request.getRequestDispatcher("/jsp/article/detail.jsp").forward(request, response);
+			request.setAttribute("articleRows", articleRows); // set => jsp에서 get
+			request.getRequestDispatcher("/jsp/article/list.jsp").forward(request, response);
 
 		} catch (SQLException e) {
 			e.printStackTrace();

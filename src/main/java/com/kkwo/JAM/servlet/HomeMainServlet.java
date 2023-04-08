@@ -1,4 +1,4 @@
-package com.kkwo.JAM;
+package com.kkwo.JAM.servlet;
 
 import java.io.IOException;
 import javax.servlet.ServletException;
@@ -7,10 +7,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/Home/main")
+@WebServlet("/home/main")
 public class HomeMainServlet extends HttpServlet {
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		response.getWriter().append("Hello world!").append(request.getContextPath());
+		request.getRequestDispatcher("/jsp/home/main.jsp").forward(request, response);
 	}
 }

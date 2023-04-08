@@ -18,13 +18,6 @@ import javax.servlet.http.HttpServletResponse;
 import com.kkwo.JAM.exception.SQLErrorException;
 
 public class DBUtil {
-	HttpServletRequest req;
-	HttpServletResponse resp;
-	
-	public DBUtil(HttpServletRequest request, HttpServletResponse response) {
-		this.req = request;
-		this.resp = response;
-	}
 
 	public static Map<String, Object> selectRow(Connection dbConn, String sql) {
 		List<Map<String, Object>> rows = selectRows(dbConn, sql);
