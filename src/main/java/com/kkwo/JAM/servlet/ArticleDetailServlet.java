@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.kkwo.JAM.util.DBUtil;
+import com.kkwo.JAM.util.SecSql;
 
 @WebServlet("/article/detail")
 public class ArticleDetailServlet extends HttpServlet {
@@ -44,7 +45,9 @@ public class ArticleDetailServlet extends HttpServlet {
 
 			int id = Integer.parseInt(request.getParameter("id"));
 			
-			String sql = String.format("SELECT * FROM article WHERE id = %d", id);
+			SecSql sql = SecSql.from("SELECT *");
+			sql.append("FROM article");
+			sql.append("WHERE id = ?;", id);
 			
 			Map<String, Object> articleRow = DBUtil.selectRow(conn, sql);
 			
