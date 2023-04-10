@@ -1,3 +1,0 @@
-req : http://localhost:8080/2023_JSP_review/article/delete?id=~
-
-삭제
