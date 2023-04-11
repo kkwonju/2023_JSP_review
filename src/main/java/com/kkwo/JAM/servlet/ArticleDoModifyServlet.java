@@ -16,12 +16,12 @@ import javax.servlet.http.HttpServletResponse;
 import com.kkwo.JAM.util.DBUtil;
 import com.kkwo.JAM.util.SecSql;
 
-@WebServlet("/article/list")
-public class ArticleListServlet extends HttpServlet {
+@WebServlet("/article/doModify")
+public class ArticleDoModifyServlet extends HttpServlet {
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		
+
 		response.setContentType("text/html; charset=UTF-8");
 
 		// DB 연결
@@ -42,33 +42,21 @@ public class ArticleListServlet extends HttpServlet {
 		try {
 			conn = DriverManager.getConnection(url, user, password);
 			
-			int page = 1;
-			if(request.getParameter("page") != null && request.getParameter("page").length() != 0) {
-				page = Integer.parseInt(request.getParameter("page"));
-			}
-			int itemsInAPage = 10;
-			int limitFrom = (page-1)*itemsInAPage;
+			request.setCharacterEncoding("UTF-8");
+			String title = (String) request.getParameter("title");
+			String body = (String) request.getParameter("body");
+			int id = (int) Integer.parseInt(request.getParameter("id"));
 			
-			SecSql sql = SecSql.from("SELECT COUNT(*)");
-			sql.append("FROM article");
-			
-			int totalCnt = DBUtil.selectRowIntValue(conn, sql);
-			int totalPage = (int) Math.ceil((double) totalCnt / itemsInAPage);
+			SecSql sql = SecSql.from("UPDATE article ");
+			sql.append("SET regDate = NOW(),");
+			sql.append(" title = ?,", title);
+			sql.append(" `body` = ?", body);
+			sql.append("WHERE id = ?", id);
 
-			sql = SecSql.from("SELECT *");
-			sql.append("FROM article");
-			sql.append("ORDER BY id DESC");
-			sql.append("LIMIT ?, ?", limitFrom, itemsInAPage);
-			
-			List<Map<String, Object>> articleRows = DBUtil.selectRows(conn, sql);
-			
-			response.getWriter().append(articleRows.toString());
-			
-			request.setAttribute("articleRows", articleRows);
-			request.setAttribute("totalPage", totalPage);
-			request.setAttribute("page", page);
+			DBUtil.update(conn, sql);
 
-			request.getRequestDispatcher("/jsp/article/list.jsp").forward(request, response);
+			response.getWriter()
+					.append(String.format("<script>alert('%d번 글이 수정되었습니다');location.replace('detail?id=%d');</script>", id, id));
 
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -81,5 +69,10 @@ public class ArticleListServlet extends HttpServlet {
 				e.printStackTrace();
 			}
 		}
+	}
+	
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		// TODO Auto-generated method stub
+		doGet(request, response);
 	}
 }

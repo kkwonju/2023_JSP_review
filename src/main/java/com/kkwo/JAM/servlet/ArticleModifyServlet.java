@@ -16,12 +16,12 @@ import javax.servlet.http.HttpServletResponse;
 import com.kkwo.JAM.util.DBUtil;
 import com.kkwo.JAM.util.SecSql;
 
-@WebServlet("/article/list")
-public class ArticleListServlet extends HttpServlet {
+@WebServlet("/article/modify")
+public class ArticleModifyServlet extends HttpServlet {
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		
+
 		response.setContentType("text/html; charset=UTF-8");
 
 		// DB 연결
@@ -42,34 +42,15 @@ public class ArticleListServlet extends HttpServlet {
 		try {
 			conn = DriverManager.getConnection(url, user, password);
 			
-			int page = 1;
-			if(request.getParameter("page") != null && request.getParameter("page").length() != 0) {
-				page = Integer.parseInt(request.getParameter("page"));
-			}
-			int itemsInAPage = 10;
-			int limitFrom = (page-1)*itemsInAPage;
+			int id = (int) Integer.parseInt(request.getParameter("id"));
 			
-			SecSql sql = SecSql.from("SELECT COUNT(*)");
-			sql.append("FROM article");
-			
-			int totalCnt = DBUtil.selectRowIntValue(conn, sql);
-			int totalPage = (int) Math.ceil((double) totalCnt / itemsInAPage);
+			SecSql sql = SecSql.from("SELECT * FROM article");
+			sql.append("WHERE id = ?", id);
 
-			sql = SecSql.from("SELECT *");
-			sql.append("FROM article");
-			sql.append("ORDER BY id DESC");
-			sql.append("LIMIT ?, ?", limitFrom, itemsInAPage);
+			Map<String, Object> articleRow = DBUtil.selectRow(conn, sql);
 			
-			List<Map<String, Object>> articleRows = DBUtil.selectRows(conn, sql);
-			
-			response.getWriter().append(articleRows.toString());
-			
-			request.setAttribute("articleRows", articleRows);
-			request.setAttribute("totalPage", totalPage);
-			request.setAttribute("page", page);
-
-			request.getRequestDispatcher("/jsp/article/list.jsp").forward(request, response);
-
+			request.setAttribute("articleRow", articleRow);
+			request.getRequestDispatcher("/jsp/article/modify.jsp").forward(request, response);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
