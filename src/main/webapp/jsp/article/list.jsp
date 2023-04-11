@@ -46,23 +46,48 @@ int cPage = (int) request.getAttribute("page");
 		}
 		%>
 	</table>
-	
+
 	<style>
-		.page {
-			background-color: gold;
-		}
-		.page > a {
-			color: black;
-		}
-		.page > a.red {
-			color: red;
-		}
-	</style>
+.page {
+	background-color: gold;
+}
+
+.page>a {
+	color: black;
+}
+
+.page>a.red {
+	color: red;
+}
+</style>
+
 	<div class="page">
 		<%
-		for (int i = 1; i <= totalPage; i++) {
+		int limitPage = 5;
+		int start = cPage - limitPage;
+		int end = cPage + limitPage;
+
+		if (start < 1) {
+			start = 1;
+		}
+
+		if (end > totalPage) {
+			end = totalPage;
+		}
+
+		if (cPage > 1) {
 		%>
-		<a class="<%=cPage == i ? "red" : "" %>" href="list?page=<%=i%>"><%=i%></a>
+		<a href="list?page=1"> << </a>
+		<%
+		}
+		for (int i = start; i <= end; i++) {
+		%>
+		<a class="<%=cPage == i ? "red" : ""%>" href="list?page=<%=i%>"><%=i%></a>
+		<%
+		}
+		if (cPage < totalPage) {
+		%>
+		<a href="list?page=<%=totalPage%>"> >> </a>
 		<%
 		}
 		%>
