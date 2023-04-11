@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.kkwo.JAM.config.Config;
 import com.kkwo.JAM.util.DBUtil;
 import com.kkwo.JAM.util.SecSql;
 
@@ -23,12 +24,6 @@ public class ArticleDoWriteServlet extends HttpServlet {
 			throws ServletException, IOException {
 
 		response.setContentType("text/html; charset=UTF-8");
-
-		// DB 연결
-		String url = "jdbc:mysql://127.0.0.1:3306/JSPAM?useUnicode=true&characterEncoding=utf8&autoReconnect=true&serverTimezone=Asia/Seoul&useOldAliasMetadataBehavior=true&zeroDateTimeNehavior=convertToNull";
-		String user = "root";
-		String password = "";
-
 		Connection conn = null;
 
 		try {
@@ -40,12 +35,12 @@ public class ArticleDoWriteServlet extends HttpServlet {
 		}
 
 		try {
-			conn = DriverManager.getConnection(url, user, password);
-			
+			conn = DriverManager.getConnection(Config.getDBUrl(), Config.getDBUser(), Config.getDBPassword());
+
 			request.setCharacterEncoding("UTF-8");
 			String title = (String) request.getParameter("title");
 			String body = (String) request.getParameter("body");
-			
+
 			SecSql sql = SecSql.from("INSERT INTO article ");
 			sql.append("SET regDate = NOW(),");
 			sql.append(" title = ?,", title);
@@ -68,8 +63,9 @@ public class ArticleDoWriteServlet extends HttpServlet {
 			}
 		}
 	}
-	
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+	protected void doPost(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		doGet(request, response);
 	}
