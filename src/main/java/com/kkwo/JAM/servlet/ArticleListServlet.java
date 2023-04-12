@@ -38,26 +38,6 @@ public class ArticleListServlet extends HttpServlet {
 
 		try {
 			conn = DriverManager.getConnection(Config.getDBUrl(), Config.getDBUser(), Config.getDBPassword());
-
-			boolean isLogined = false;
-			int loginedMemberId = -1;
-			Map<String, Object> memberRow = null;
-
-			HttpSession session = request.getSession();
-			if (session.getAttribute("loginedMemberId") != null) {
-				isLogined = true;
-				loginedMemberId = (int) session.getAttribute("loginedMemberId");
-				
-				SecSql sql = SecSql.from("SELECT *");
-				sql.append("FROM `member`");
-				sql.append("WHERE id = ?", loginedMemberId);
-				
-				memberRow = DBUtil.selectRow(conn, sql);
-			}
-			
-			request.setAttribute("isLogined", isLogined);
-			request.setAttribute("loginedMemberId", loginedMemberId);
-			request.setAttribute("memberRow", memberRow);
 			
 			int page = 1;
 			if (request.getParameter("page") != null && request.getParameter("page").length() != 0) {
