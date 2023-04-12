@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import com.kkwo.JAM.service.ArticleService;
 import com.kkwo.JAM.util.DBUtil;
 import com.kkwo.JAM.util.SecSql;
 
@@ -17,11 +18,13 @@ public class ArticleController {
 	private HttpServletRequest request;
 	private HttpServletResponse response;
 	private Connection conn;
-	
+	private ArticleService articleService;
+
 	public ArticleController(HttpServletRequest request, HttpServletResponse response, Connection conn) {
 		this.request = request;
 		this.response = response;
 		this.conn = conn;
+		this.articleService = new ArticleService(conn);
 	}
 
 	public void showList() throws ServletException, IOException {
@@ -29,25 +32,9 @@ public class ArticleController {
 		if (request.getParameter("page") != null && request.getParameter("page").length() != 0) {
 			page = Integer.parseInt(request.getParameter("page"));
 		}
-		int itemsInAPage = 10;
-		int limitFrom = (page - 1) * itemsInAPage;
+		int totalPage = articleService.getTotalPage(page);
 
-		SecSql sql = SecSql.from("SELECT COUNT(*)");
-		sql.append("FROM article");
-
-		int totalCnt = DBUtil.selectRowIntValue(conn, sql);
-		int totalPage = (int) Math.ceil((double) totalCnt / itemsInAPage);
-
-		sql = SecSql.from("SELECT A.*, M.name AS 'extra__writer'");
-		sql.append("FROM article AS A");
-		sql.append("INNER JOIN `member` AS M");
-		sql.append("ON A.memberId = M.id");
-		sql.append("ORDER BY A.id DESC");
-		sql.append("LIMIT ?, ?", limitFrom, itemsInAPage);
-
-		List<Map<String, Object>> articleRows = DBUtil.selectRows(conn, sql);
-
-		response.getWriter().append(articleRows.toString());
+		List<Map<String, Object>> articleRows = articleService.getForPrintArticleRows(page);
 
 		request.setAttribute("articleRows", articleRows);
 		request.setAttribute("totalPage", totalPage);
@@ -76,7 +63,7 @@ public class ArticleController {
 			response.getWriter().append(String.format("<script>alert('로그인 후 이용해주세요');history.back();</script>"));
 			return;
 		}
-		
+
 		String title = (String) request.getParameter("title");
 		String body = (String) request.getParameter("body");
 		int memberId = (int) Integer.parseInt(request.getParameter("memberId"));
@@ -112,12 +99,12 @@ public class ArticleController {
 
 	public void showModifyForm() throws ServletException, IOException {
 		HttpSession session = request.getSession();
-		
+
 		if (session.getAttribute("loginedMemberId") == null) {
 			response.getWriter().append(String.format("<script>alert('로그인 후 이용해주세요');history.back();</script>"));
 			return;
 		}
-		
+
 		int memberId = (int) session.getAttribute("loginedMemberId");
 		int id = Integer.parseInt(request.getParameter("id"));
 
@@ -126,7 +113,7 @@ public class ArticleController {
 		sql.append("WHERE id = ?", id);
 
 		Map<String, Object> articleRow = DBUtil.selectRow(conn, sql);
-		
+
 		if (!articleRow.get("memberId").equals(memberId)) {
 			response.getWriter().append(String.format("<script>alert('수정 권한이 없습니다');history.back();</script>"));
 			return;
@@ -151,7 +138,7 @@ public class ArticleController {
 
 		String title = (String) request.getParameter("title");
 		String body = (String) request.getParameter("body");
-		
+
 		int id = Integer.parseInt(request.getParameter("id"));
 		int memberId = (int) session.getAttribute("loginedMemberId");
 
@@ -160,7 +147,7 @@ public class ArticleController {
 		sql.append("WHERE id = ?", id);
 
 		Map<String, Object> articleRow = DBUtil.selectRow(conn, sql);
-		
+
 		if (!articleRow.get("memberId").equals(memberId)) {
 			response.getWriter().append(String.format("<script>alert('수정 권한이 없습니다');history.back();</script>"));
 			return;
@@ -174,31 +161,29 @@ public class ArticleController {
 
 		DBUtil.update(conn, sql);
 
-		response.getWriter().append(String
-				.format("<script>alert('%d번 글이 수정되었습니다');location.replace('detail?id=%d');</script>", id, id));
+		response.getWriter().append(
+				String.format("<script>alert('%d번 글이 수정되었습니다');location.replace('detail?id=%d');</script>", id, id));
 	}
 
 	public void doDelete() throws ServletException, IOException {
 		HttpSession session = request.getSession();
-		
-		if(session.getAttribute("loginedMemberId") == null) {
-			response.getWriter()
-			.append(String.format("<script>alert('로그인 후 이용해주세요');history.back();</script>"));
+
+		if (session.getAttribute("loginedMemberId") == null) {
+			response.getWriter().append(String.format("<script>alert('로그인 후 이용해주세요');history.back();</script>"));
 			return;
 		}
-		
+
 		int memberId = (int) session.getAttribute("loginedMemberId");
 		int id = Integer.parseInt(request.getParameter("id"));
-		
-		SecSql sql = SecSql.from("SELECT * "); 
+
+		SecSql sql = SecSql.from("SELECT * ");
 		sql.append("FROM article ");
 		sql.append("WHERE id = ?", id);
-		
+
 		Map<String, Object> articleRow = DBUtil.selectRow(conn, sql);
-		
-		if(!articleRow.get("memberId").equals(memberId)) {
-			response.getWriter()
-			.append(String.format("<script>alert('삭제 권한이 없습니다');history.back();</script>"));
+
+		if (!articleRow.get("memberId").equals(memberId)) {
+			response.getWriter().append(String.format("<script>alert('삭제 권한이 없습니다');history.back();</script>"));
 			return;
 		}
 
@@ -211,5 +196,5 @@ public class ArticleController {
 		response.getWriter()
 				.append(String.format("<script>alert('%d번 글이 삭제되었습니다');location.replace('list');</script>", id));
 	}
-	
+
 }
