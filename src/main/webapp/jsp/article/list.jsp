@@ -1,5 +1,3 @@
-<%@ page import="java.util.List"%>
-<%@ page import="java.util.Map"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%
@@ -14,13 +12,9 @@ int cPage = (int) request.getAttribute("page");
 <title>게시물 리스트</title>
 </head>
 <body>
-	<div>
-		<a href="../home/main">메인 페이지</a>
-	</div>
-	<div>
-		<a href="write">글쓰기</a>
-	</div>
-
+	<%@ include file="../part/topbar.jspf" %>
+	<br />
+	
 	<h1>게시물 리스트</h1>
 
 	<table style="border-collapser: collapse; border-color: green"
