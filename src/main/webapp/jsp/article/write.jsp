@@ -10,6 +10,7 @@
 	<div>
 		<a href="list">목록으로 돌아가기</a>
 	</div>
+	<h1>글쓰기</h1>
 	<form action="doWrite" method="post">
 		<div>
 			제목

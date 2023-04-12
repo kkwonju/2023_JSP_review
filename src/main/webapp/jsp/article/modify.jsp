@@ -8,12 +8,13 @@ Map<String, Object> articleRow = (Map<String, Object>) request.getAttribute("art
 <html>
 <head>
 <meta charset="UTF-8">
-<title>게시물 작성 페이지</title>
+<title>게시물 수정 페이지</title>
 </head>
 <body>
 	<div>
 		<a href="list">목록으로 돌아가기</a>
 	</div>
+	<h1>${param.id}번 게시물 수정</h1>
 	<form action="doModify" method="post">
 		<input name="id" type="hidden" value="${param.id}" />
 		<div>
