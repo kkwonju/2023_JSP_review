@@ -22,6 +22,10 @@ Map<String, Object> articleRow = (Map<String, Object>) request.getAttribute("art
 		<%=articleRow.get("regDate")%>,
 	</div>
 	<div>
+		작성자 id:
+		<%=articleRow.get("memberId")%>,
+	</div>
+	<div>
 		제목:
 		<%=articleRow.get("title")%>,
 	</div>
@@ -29,5 +33,7 @@ Map<String, Object> articleRow = (Map<String, Object>) request.getAttribute("art
 		내용:
 		<%=articleRow.get("body")%></div>
 	<div><a style="color:green;" href="list">리스트로 돌아가기</a></div>
+	<a href="modify?id=${param.id}">수정</a>
+	<a href="doDelete?id=${param.id}">삭제</a>
 </body>
 </html>

@@ -1,5 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
+<%
+int memberId = (int) request.getAttribute("loginedMemberId");
+%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -13,13 +16,16 @@
 	<h1>글쓰기</h1>
 	<form action="doWrite" method="post">
 		<div>
+			<input name="memberId" type="hidden" value="<%=memberId%>"/>
+		</div>
+		<div>
 			제목
 		</div>
-			<input name="title" type="text" placeholder="제목을 입력하세요" />
+			<input name="title" type="text" placeholder="제목을 입력하세요" required/>
 		<div>
 			내용
 		</div>
-			<textarea name="body" id="body" placeholder="내용을 입력하세요"></textarea>
+			<textarea name="body" id="body" placeholder="내용을 입력하세요" required></textarea>
 		<div>
 			<button type="submit">작성</button>
 			<button type="reset">초기화</button>
