@@ -26,4 +26,5 @@
 26. 수정/삭제 코드 수정, 로그인 체크, 게시글 출력 시 작성자 노출
 27. topbar.jspf 추가
 28. 디스패쳐서블릿 도입, controller 도입
-29. 
+29. ArticleService, ArticleDao 도입
+30. MemberService, MemberDao 도입

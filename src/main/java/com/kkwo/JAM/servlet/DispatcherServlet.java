@@ -6,6 +6,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Map;
 
+import javax.management.loading.PrivateClassLoader;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -52,7 +53,6 @@ public class DispatcherServlet extends HttpServlet {
 				SecSql sql = SecSql.from("SELECT *");
 				sql.append("FROM `member`");
 				sql.append("WHERE id = ?", loginedMemberId);
-				
 				memberRow = DBUtil.selectRow(conn, sql);
 			}
 			
