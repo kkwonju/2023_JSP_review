@@ -12,6 +12,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import com.kkwo.JAM.config.Config;
 import com.kkwo.JAM.util.DBUtil;
@@ -37,6 +38,13 @@ public class ArticleDoWriteServlet extends HttpServlet {
 		try {
 			conn = DriverManager.getConnection(Config.getDBUrl(), Config.getDBUser(), Config.getDBPassword());
 
+			HttpSession session = request.getSession();
+
+			if (session.getAttribute("loginedMemberId") == null) {
+				response.getWriter().append(String.format("<script>alert('로그인 후 이용해주세요');history.back();</script>"));
+				return;
+			}
+			
 			String title = (String) request.getParameter("title");
 			String body = (String) request.getParameter("body");
 			int memberId = (int) Integer.parseInt(request.getParameter("memberId"));

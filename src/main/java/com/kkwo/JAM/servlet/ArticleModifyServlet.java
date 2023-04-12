@@ -25,7 +25,7 @@ public class ArticleModifyServlet extends HttpServlet {
 			throws ServletException, IOException {
 
 		response.setContentType("text/html; charset=UTF-8");
-		
+
 		Connection conn = null;
 
 		try {
@@ -38,31 +38,33 @@ public class ArticleModifyServlet extends HttpServlet {
 
 		try {
 			conn = DriverManager.getConnection(Config.getDBUrl(), Config.getDBUser(), Config.getDBPassword());
-			
+
 			HttpSession session = request.getSession();
-			int loginedMemberId = (int) session.getAttribute("loginedMemberId");
 			
-			int id = Integer.parseInt(request.getParameter("id"));
-			
-			SecSql sql = SecSql.from("SELECT COUNT(*)"); 
-			sql.append(" FROM article AS a");
-			sql.append("INNER JOIN `member` AS m");
-			sql.append("ON a.memberId = m.id");
-			sql.append(" WHERE a.memberId = ?", loginedMemberId);
-			sql.append(" AND a.id = ?", id);
-			
-			int cnt = DBUtil.selectRowIntValue(conn, sql);
-			if(cnt == 0) {
-				response.getWriter()
-				.append(String.format("<script>alert('수정 권한이 없습니다');history.back();</script>"));
+			if (session.getAttribute("loginedMemberId") == null) {
+				response.getWriter().append(String.format("<script>alert('로그인 후 이용해주세요');history.back();</script>"));
 				return;
 			}
 			
-			sql = SecSql.from("SELECT * FROM article");
+			int memberId = (int) session.getAttribute("loginedMemberId");
+			int id = Integer.parseInt(request.getParameter("id"));
+
+			SecSql sql = SecSql.from("SELECT * ");
+			sql.append("FROM article ");
 			sql.append("WHERE id = ?", id);
 
 			Map<String, Object> articleRow = DBUtil.selectRow(conn, sql);
 			
+			if (!articleRow.get("memberId").equals(memberId)) {
+				response.getWriter().append(String.format("<script>alert('수정 권한이 없습니다');history.back();</script>"));
+				return;
+			}
+
+			sql = SecSql.from("SELECT * FROM article");
+			sql.append("WHERE id = ?", id);
+
+			articleRow = DBUtil.selectRow(conn, sql);
+
 			request.setAttribute("articleRow", articleRow);
 			request.getRequestDispatcher("/jsp/article/modify.jsp").forward(request, response);
 		} catch (SQLException e) {

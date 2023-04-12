@@ -22,8 +22,8 @@ Map<String, Object> articleRow = (Map<String, Object>) request.getAttribute("art
 		<%=articleRow.get("regDate")%>,
 	</div>
 	<div>
-		작성자 id:
-		<%=articleRow.get("memberId")%>,
+		작성자:
+		<%=articleRow.get("extra__writer")%>,
 	</div>
 	<div>
 		제목:

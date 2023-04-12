@@ -29,6 +29,7 @@ int cPage = (int) request.getAttribute("page");
 			<th>번호</th>
 			<th>작성날짜</th>
 			<th>제목</th>
+			<th>작성자</th>
 			<th>수정</th>
 			<th>삭제</th>
 		</tr>
@@ -39,6 +40,7 @@ int cPage = (int) request.getAttribute("page");
 			<td><%=articleRow.get("id")%></td>
 			<td><%=articleRow.get("regDate")%></td>
 			<td><a href="detail?id=<%=articleRow.get("id")%>"><%=articleRow.get("title")%></a></td>
+			<td><%=articleRow.get("extra__writer")%></td>
 			<td><a href="modify?id=<%=articleRow.get("id")%>">수정</a></td>
 			<td><a href="doDelete?id=<%=articleRow.get("id")%>">삭제</a></td>
 		</tr>
