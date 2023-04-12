@@ -12,6 +12,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import com.kkwo.JAM.config.Config;
 import com.kkwo.JAM.util.DBUtil;
@@ -38,9 +39,26 @@ public class ArticleDoDeleteServlet extends HttpServlet {
 		try {
 			conn = DriverManager.getConnection(Config.getDBUrl(), Config.getDBUser(), Config.getDBPassword());
 
+			HttpSession session = request.getSession();
+			int loginedMemberId = (int) session.getAttribute("loginedMemberId");
+			
 			int id = Integer.parseInt(request.getParameter("id"));
+			
+			SecSql sql = SecSql.from("SELECT COUNT(*)"); 
+			sql.append(" FROM article AS a");
+			sql.append("INNER JOIN `member` AS m");
+			sql.append("ON a.memberId = m.id");
+			sql.append(" WHERE a.memberId = ?", loginedMemberId);
+			sql.append(" AND a.id = ?", id);
+			
+			int cnt = DBUtil.selectRowIntValue(conn, sql);
+			if(cnt == 0) {
+				response.getWriter()
+				.append(String.format("<script>alert('삭제 권한이 없습니다');history.back();</script>"));
+				return;
+			}
 
-			SecSql sql = SecSql.from("DELETE ");
+			sql = SecSql.from("DELETE ");
 			sql.append("FROM article");
 			sql.append("WHERE id =?", id);
 
